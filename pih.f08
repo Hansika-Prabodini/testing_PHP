@@ -6,7 +6,9 @@ module util
     function arange(n) result(a)
     implicit none
     integer, intent(in) :: n
-    integer :: i, a(n)
+    integer :: i
+    integer, allocatable :: a(:)
+    allocate(a(n))
     do i = 1, n
         a(i) = i
     end do
@@ -23,7 +25,8 @@ module util
 
     subroutine write_matrix(unit, a)
     implicit none
-    integer, intent(in) :: unit, a(:, :)
+    integer, intent(in) :: unit
+    integer, intent(in) :: a(:, :)
     integer :: i
     character(len=7) :: fmt
     write(unit, '("shape",1x,2i6)') shape(a)
@@ -41,8 +44,7 @@ module combinations
 
     contains
 
-    logical &
-    function lex_gt(a, b)
+    logical function lex_gt(a, b)
     implicit none
     integer, intent(in) :: a(:), b(:)
     integer :: i
@@ -96,7 +98,7 @@ module combinations
 
 103 close(unit)
     write(*, *) 'symmetries:', c
-    end
+    end subroutine
 
     subroutine embeddings(t, a, isym)
     implicit none
@@ -159,7 +161,7 @@ module combinations
 
 103 close(unit)
     write(*, *) 'embeddings:', c
-    end
+    end subroutine
 
 end module
 
@@ -181,7 +183,7 @@ module combinations_tests
         a(i, i+1) = 1
         a(i+1, i) = 1
     end do
-    end
+    end subroutine
 
     subroutine ring(n, a)
     implicit none
@@ -190,7 +192,7 @@ module combinations_tests
     call chain(n, a)
     a(1, n) = 1
     a(n, 1) = 1
-    end
+    end subroutine
 
     subroutine test_symmetries
     use util, only: write_matrix
@@ -202,7 +204,7 @@ module combinations_tests
     call chain(n, a)
     call write_matrix(0, a)
     call symmetries(a, nsym)
-    end 
+    end subroutine
 
 
     subroutine test_embeddings
@@ -211,10 +213,9 @@ module combinations_tests
     integer, parameter :: n=4, m=2
     integer :: t(m), a(n, n), i
     t = arange(m)
-    !t = 1
     call ring(n, a)
     call embeddings(t, a)
-    end 
+    end subroutine
 
     subroutine test_all
     call test_symmetries
@@ -224,11 +225,11 @@ module combinations_tests
 end module
 
 
-    program main
+program main
     use combinations
     use util
     implicit none
-    integer :: n, i, j, k, l, unit, a, t, io
+    integer :: n, i, j, k, l, unit
     allocatable :: a(:, :), t(:), io(:)
     open(newunit=unit, file='graph.txt')
     read(unit, *) n
@@ -246,7 +247,5 @@ end module
         end do
     end do
     close(unit)
-    !call write_matrix(0, a)
-    !print*, t
     call embeddings(t, a)
-    end program
+end program
