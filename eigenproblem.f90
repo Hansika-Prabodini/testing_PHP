@@ -26,5 +26,4 @@ program eigenproblem
   ! Cleanup
   deallocate(eigensystem%eigen_vecs, eigensystem%eigen_vals)
 
-
 end program eigenproblem
