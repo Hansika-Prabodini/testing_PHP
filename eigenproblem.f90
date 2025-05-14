@@ -13,6 +13,10 @@ program eigenproblem
   pauli_x(2,1) = cone
   pauli_x = pauli_x / sqrt(two)
 
+  ! Allocate memory for eigensystem before calling the function
+  allocate(eigensystem%eigen_vecs(size(pauli_x, 1), 2))
+  allocate(eigensystem%eigen_vals(2))
+
   call get_eigensystem(pauli_x, eigensystem)
 
   ! Write result to the screen
